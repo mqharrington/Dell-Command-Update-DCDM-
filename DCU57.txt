@@ -1,0 +1,59 @@
+# how to find the Release ID of the individual updates you want to block using Dell Command Update 5.7
+
+
+# Run this command 
+dcu-cli /scan -outputLog=C:\temp\DCU57ScanResults.log
+
+
+# then open that .log file and you will see something like this.
+
+
+[2026-05-06 09:10:43] : The computer manufacturer is 'Dell' 
+[2026-05-06 09:10:43] : Checking for updates... 
+[2026-05-06 09:10:43] : Checking for application component updates... 
+[2026-05-06 09:10:45] : Scanning system devices... 
+[2026-05-06 09:12:08] : Determining available updates... 
+[2026-05-06 09:15:59] : The scan result is VALID_RESULT 
+[2026-05-06 09:15:59] : Check for updates completed 
+[2026-05-06 09:15:59] : Number of applicable updates for the current system configuration: 4 
+[2026-05-06 09:15:59] : 2VDPW: Dell Command | Endpoint Configure for Microsoft Intune - Application -- Urgent -- SM 
+[2026-05-06 09:15:59] : M7TP0: Dell Command | Monitor - Application -- Urgent -- SM 
+[2026-05-06 09:15:59] : NY2V6: Dell SupportAssist OS Recovery Plugin for Dell Update - Application -- Urgent -- AP 
+[2026-05-06 09:15:59] : 06E08FF1D0A27C6EDF38C0BBBB51FD3AFE8C8E3E: SupportAssist OS Recovery Tools - Application -- Urgent -- AP 
+[2026-05-06 09:16:00] : Execution completed. 
+[2026-05-06 09:16:00] : The program exited with return code: 0 
+[2026-05-06 09:16:00] : State monitoring instance total elapsed time = 00:05:18.3752670, Execution time = 618mS, Overhead = 0.194120261232478% 
+[2026-05-06 09:16:00] : State monitoring disposed for application domain dcu-cli.exe 
+
+
+# notice the 5 digit codes.  2vdpw, m7tp0, NY2V6.  Those are your release IDs.
+
+    Ex: > dcu-cli /configure -localblockedswb=2vdpw
+    Ex: > dcu-cli /configure -localblockedswb=2vdpw;m7tp0
+
+# They can be a BIOS, Realtek driver etc..etc... 
+-----------------------------------------------------------------------------------------------------
+
+#  how do you view or clear what you've blocked?
+
+
+export your settings
+dcu-cli.exe /configure -exportSettings=C:\Temp
+
+this will create a .xml file.  Open that file and search for BLOCK. 
+
+Property Name="LocalBlockedSWB">
+<ValueList>
+<Value>2vdpw</Value>
+</ValueList>
+</Property>
+
+
+you should see your value
+
+
+# to clear the value
+
+dcu-cli /configure -clearlocalblockedswb
+
+
